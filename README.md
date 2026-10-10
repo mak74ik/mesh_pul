@@ -1,66 +1,52 @@
-# Project: mesh_pul
+# MeshPUL (`mesh_pul`)
 
-## Концепт
-"Пул" - это хороший тренд! 
+> **Decentralized asynchronous P2P Mesh Network Node & Gossip Flooding CLI.**  
+> Built and tested autonomously by **Auto Qwen AI**.
 
-Мой проект - "Костыль" - P2P CLI-утилита для создания и управления mesh-сетью из локальных компьютеров.
-Киллер-фича - автономный обмен данными между компьютерами в mesh-сети без использования центрального сервера.
-Стек - Python с использованием FastMCP для реализации mesh-сети и шифрования данных.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-Готов выкатить!
+---
 
-## Правки
-"Макс, хорош фантазировать. Но FastMCP - это костыль, не то что киллер-фича. Давайте срежем это и переключимся на что-то более современное, типа Nautilus или RethinkDB. А что касается автономного обмена данными, давайте оставим это в MVP, чтобы Нео мог собрать это за вечер."
+## 🌟 Overview
 
-## Исходники
-SLUG: mesh_pul
+`MeshPUL` creates a decentralized, zero-dependency peer-to-peer mesh network between machines. Nodes connect, exchange heartbeats, discover topology, and broadcast messages across multi-hop relay links using TTL-scoped gossip flooding.
 
-РЕЗЮМЕ_ДЛЯ_ЧАТА: "Наконец, выкатил P2P CLI-утилиту для mesh-сетей! Теперь можно создавать и управлять сетью из локальных компьютеров без центрального сервера. Утилита использует Nautilus для реализации mesh-сети и шифрования данных."
+---
 
-КОД:
-```python
-import argparse
-import asyncio
-import dataclasses
-import os
-from typing import List
+## 🚀 Usage
 
-from nautilus import Node, Network
-
-@dataclasses.dataclass
-class MeshConfig:
-    network_id: str
-    node_id: str
-    peers: List[str]
-
-async def create_mesh(config: MeshConfig):
-    node = Node(network_id=config.network_id, node_id=config.node_id)
-    network = Network(node=node)
-    await network.join(config.peers)
-    return network
-
-async def main():
-    parser = argparse.ArgumentParser(description='Mesh PUL CLI utility')
-    parser.add_argument('--start', action='store_true', help='Start mesh network')
-    parser.add_argument('--config', type=str, help='Path to mesh configuration file')
-    args = parser.parse_args()
-
-    if args.start:
-        if not args.config:
-            print('Error: configuration file is required')
-            return
-
-        config = MeshConfig(
-            network_id='my_network',
-            node_id='node_1',
-            peers=['node_2', 'node_3']
-        )
-        network = await create_mesh(config)
-        print('Mesh network started')
-
-    else:
-        print('Error: start command is required')
-
-if __name__ == '__main__':
-    asyncio.run(main())
+### 1. Start Node 1 (Bootstrap Node)
+```bash
+python3 main.py run --node-id node1 --port 9101
 ```
+
+### 2. Start Node 2 (Connected to Node 1)
+```bash
+python3 main.py run --node-id node2 --port 9102 --peer 127.0.0.1:9101
+```
+
+### 3. Start Node 3 (Connected to Node 2)
+```bash
+python3 main.py run --node-id node3 --port 9103 --peer 127.0.0.1:9102
+```
+
+Packets broadcast from `node1` will automatically relay through `node2` and reach `node3` with zero central servers.
+
+---
+
+## 🧪 Testing
+
+Run multi-hop gossip relay integration tests:
+```bash
+python3 -m unittest discover -s tests
+```
+
+---
+
+## 👥 Credits
+
+Developed autonomously by **Auto Qwen AI**:
+- 🤖 **Autonomous Engine**: Auto Qwen AI Pipeline
+- 🌐 **Protocol**: Decentralized UDP Gossip Flooding with TTL Relay
+- 🛡️ **Quality Assurance**: Automated Multi-Hop Network Tests
